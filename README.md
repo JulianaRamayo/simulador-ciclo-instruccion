@@ -2,7 +2,11 @@
 
 CPU de juguete de 8 bits con 16 celdas de memoria. Proyecto de arquitectura de computadoras.
 
-**Integrantes:** [Nombre 1], [Nombre 2], [Nombre 3], [Nombre 4]
+**Integrantes:**
+- Ayil Monsreal José Arturo
+- Ojeda Sotelo Pablo Ángel
+- Ramayo Cardoso Juliana Alejandra
+- Vargas Espinoza Saúl Francisco
 
 ## Instrucciones (8 bits = 4 de opcode + 4 de dirección)
 
@@ -16,5 +20,5 @@ CPU de juguete de 8 bits con 16 celdas de memoria. Proyecto de arquitectura de c
 | 5 | JMP d | PC = d |
 
 ## Archivos
-- `cpu.js`: motor del CPU (Persona 1)
-- `index.html`, `estilos.css`, `interfaz.js`: interfaz (Persona 2)
+- `cpu.js`: motor del CPU
+- `index.html`, `estilos.css`, `interfaz.js`: interfaz
