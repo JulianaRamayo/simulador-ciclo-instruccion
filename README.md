@@ -1,1 +1,20 @@
-# simulador-ciclo-instruccion
+# Simulador didáctico del ciclo de instrucción
+
+CPU de juguete de 8 bits con 16 celdas de memoria. Proyecto de arquitectura de computadoras.
+
+**Integrantes:** [Nombre 1], [Nombre 2], [Nombre 3], [Nombre 4]
+
+## Instrucciones (8 bits = 4 de opcode + 4 de dirección)
+
+| Opcode | Instrucción | Acción |
+|---|---|---|
+| 0 | HALT | Detiene el CPU |
+| 1 | LOAD d | ACC = Mem[d] |
+| 2 | ADD d | ACC = ACC + Mem[d] |
+| 3 | SUB d | ACC = ACC - Mem[d] |
+| 4 | STORE d | Mem[d] = ACC |
+| 5 | JMP d | PC = d |
+
+## Archivos
+- `cpu.js`: motor del CPU (Persona 1)
+- `index.html`, `estilos.css`, `interfaz.js`: interfaz (Persona 2)

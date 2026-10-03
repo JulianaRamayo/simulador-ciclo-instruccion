@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Simulador del ciclo de instrucción</title>
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <header>
+    <h1>Simulador del ciclo de instrucción</h1>
+    <p>CPU de 8 bits con 16 celdas de memoria. Avanza una fase a la vez: fetch, decode, execute.</p>
+  </header>
+
+  <main>
+    <section class="panel" aria-label="Control">
+      <label for="programa">Programa</label>
+      <select id="programa"></select>
+      <button id="btn-paso">Paso</button>
+      <button id="btn-ejecutar">Ejecutar</button>
+      <button id="btn-reiniciar">Reiniciar</button>
+      <span id="fase-actual" class="fase"></span>
+    </section>
+
+    <section class="panel" aria-label="Registros">
+      <h2>Registros</h2>
+      <div id="registros" class="registros"></div>
+    </section>
+
+    <section class="panel" aria-label="Memoria">
+      <h2>Memoria</h2>
+      <table id="memoria">
+        <thead><tr><th>Dir</th><th>Valor</th><th>Binario</th><th>Instrucción</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section class="panel" aria-label="Bitácora">
+      <h2>Bitácora</h2>
+      <ol id="bitacora"></ol>
+    </section>
+
+    <!-- Persona 2: aquí puede ir el modo "predice el siguiente paso" y la animación del bus -->
+    <section class="panel" id="zona-didactica" aria-label="Modo didáctico">
+      <h2>Modo didáctico</h2>
+      <p>Pendiente: modo "predice el siguiente paso".</p>
+    </section>
+  </main>
+
+  <script src="cpu.js"></script>
+  <script src="interfaz.js"></script>
+</body>
+</html>
