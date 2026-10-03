@@ -22,4 +22,7 @@ CPU de juguete de 8 bits con 16 celdas de memoria. Proyecto de arquitectura de c
 
 ## Archivos
 - `cpu.js`: motor del CPU
-- `index.html`, `estilos.css`, `interfaz.js`: interfaz
+- `index.html`, `interfaz.js`: interfaz y utilidades Tailwind
+
+## Estilos
+La interfaz usa Tailwind CSS 4 mediante su CDN de navegador, por lo que necesita conexión a internet para cargar los estilos. Las clases están en `index.html` y en el HTML que genera `interfaz.js`.

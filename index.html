@@ -3,48 +3,132 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Simulador del ciclo de instrucción</title>
-  <link rel="stylesheet" href="estilos.css">
+  <meta name="theme-color" content="#17352c">
+  <meta name="description" content="Explora las fases fetch, decode y execute en un simulador interactivo de CPU de 8 bits.">
+  <title>Laboratorio CPU | Ciclo de instrucción</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Manrope', 'sans-serif'],
+            mono: ['"DM Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
-  <header>
-    <h1>Simulador del ciclo de instrucción</h1>
-    <p>CPU de 8 bits con 16 celdas de memoria. Avanza una fase a la vez: fetch, decode, execute.</p>
+<body class="min-h-screen bg-[#f3f4ee] font-sans text-[#172b24] antialiased">
+  <header class="relative overflow-hidden bg-[#17352c] text-[#f6f5ed]">
+    <div class="absolute inset-0 opacity-[0.08]" aria-hidden="true" style="background-image:linear-gradient(rgba(255,255,255,.45) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.45) 1px,transparent 1px);background-size:32px 32px"></div>
+    <div class="relative mx-auto flex max-w-7xl flex-col gap-10 px-5 pb-10 pt-6 sm:px-8 sm:pb-14 sm:pt-8 lg:px-12">
+      <div class="flex items-center justify-between border-b border-white/15 pb-5">
+        <div class="flex items-center gap-3">
+          <span class="text-xs font-extrabold uppercase tracking-[0.14em] text-white/85">Arquitectura y Organización de Computadoras </span>
+        </div>
+        <span class="hidden items-center gap-2 rounded-full border border-white/20 px-3 py-1.5 font-mono text-[11px] text-white/75 sm:flex"><span class="size-1.5 rounded-full bg-[#d5ef92]"></span> CPU · 8 BITS</span>
+      </div>
+      <div class="flex flex-col justify-between gap-8 md:flex-row md:items-end">
+        <div class="max-w-2xl">
+          <p class="mb-3 font-mono text-xs uppercase tracking-[0.16em] text-[#d5ef92]">Simulador de ciclo de instrucción <span class="px-1 text-white/40">/</span> 01</p>
+          <h1 class="max-w-xl text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-5xl">Anteproyecto Equipo 4</h1>
+          <p class="mt-4 max-w-xl text-sm leading-6 text-white/70 sm:text-base">Sigue cada operacion dentro de un procesador: de la memoria al resultado, fase por fase.</p>
+        </div>
+        <div class="flex items-center gap-2 self-start rounded-lg border border-white/15 bg-white/[0.06] px-4 py-3 font-mono text-xs text-white/80 md:self-auto">
+          <span class="text-[#d5ef92]">01</span><span class="text-white/35">/</span><span>FETCH</span><span class="text-white/35">→</span><span>DECODE</span><span class="text-white/35">→</span><span>EXECUTE</span>
+        </div>
+      </div>
+    </div>
   </header>
 
-  <main>
-    <section class="panel" aria-label="Control">
-      <label for="programa">Programa</label>
-      <select id="programa"></select>
-      <button id="btn-paso">Paso</button>
-      <button id="btn-ejecutar">Ejecutar</button>
-      <button id="btn-reiniciar">Reiniciar</button>
-      <span id="fase-actual" class="fase"></span>
+  <main class="mx-auto max-w-7xl px-5 pb-14 pt-7 sm:px-8 sm:pt-9 lg:px-12">
+    <section class="sticky top-0 z-20 mb-6 grid gap-5 border-b border-[#d9ddd4] bg-[#f3f4ee]/95 py-4 backdrop-blur-md pb-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end" aria-label="Controles del simulador">
+      <div class="flex flex-col gap-2">
+        <label for="programa" class=" text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#68766d]">Selecciona un programa</label>
+        <div class="relative max-w-md">
+          <select id="programa" class="cursor-pointer w-full appearance-none rounded-lg border border-[#cbd3ca] bg-white px-4 py-3 pr-10 text-sm font-semibold text-[#20372e] shadow-sm outline-none transition focus:border-[#34745d] focus:ring-4 focus:ring-[#34745d]/15"></select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-[#55695f]">
+            <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-2">
+        <button id="btn-paso" class="inline-flex min-h-11 items-center gap-2 rounded-lg bg-[#d5ef92] px-4 text-sm font-extrabold text-[#17352c] transition hover:bg-[#c7e681] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#34745d]/30 disabled:cursor-not-allowed disabled:opacity-45">
+          <svg viewBox="0 0 20 20" class="size-4" fill="currentColor" aria-hidden="true"><path d="M5.5 3.8a.8.8 0 0 1 1.2-.7l9 5.8a1.3 1.3 0 0 1 0 2.2l-9 5.8a.8.8 0 0 1-1.2-.7V3.8Z"/></svg> Paso
+        </button>
+        <button id="btn-ejecutar" class="inline-flex min-h-11 items-center gap-2 rounded-lg bg-[#28634f] px-4 text-sm font-bold text-white transition hover:bg-[#204f40] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#34745d]/30 disabled:cursor-not-allowed disabled:opacity-45">
+          <svg viewBox="0 0 20 20" class="size-4" fill="currentColor" aria-hidden="true"><path d="M6 4.5A1.5 1.5 0 0 1 8.25 3.2l7.2 4.2a3 3 0 0 1 0 5.2l-7.2 4.2A1.5 1.5 0 0 1 6 15.5v-11Z"/></svg> Ejecutar
+        </button>
+        <button id="btn-reiniciar" class="inline-flex min-h-11 items-center gap-2 rounded-lg border border-[#cbd3ca] bg-white px-4 text-sm font-bold text-[#36483f] transition hover:border-[#87978b] hover:bg-[#f8f9f5] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#34745d]/20">
+          <svg viewBox="0 0 20 20" class="size-4" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3.8 8a6.4 6.4 0 1 1-.2 3.5M3.8 4.2V8h3.8"/></svg> Reiniciar
+        </button>
+      </div>
     </section>
 
-    <section class="panel" aria-label="Registros">
-      <h2>Registros</h2>
-      <div id="registros" class="registros"></div>
-    </section>
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[#d8dfd5] bg-white px-4 py-3 shadow-[0_2px_10px_rgba(23,43,36,0.03)] sm:px-5">
+      <div class="flex items-center gap-3">
+        <span class="grid size-8 place-items-center rounded-md bg-[#edf4e6] text-[#34745d]" aria-hidden="true">
+          <svg viewBox="0 0 20 20" class="size-4" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 2.8h6v3.4H7zM7 13.8h6v3.4H7zM10 6.2v3.1m0 1.4v3.1M4 10h12"/></svg>
+        </span>
+        <span id="fase-actual" class="text-sm font-bold text-[#354b40]" aria-live="polite"></span>
+      </div>
+      <span class="font-mono text-[11px] uppercase tracking-[0.12em] text-[#829087]">3 fases por instruccion</span>
+    </div>
 
-    <section class="panel" aria-label="Memoria">
-      <h2>Memoria</h2>
-      <table id="memoria">
-        <thead><tr><th>Dir</th><th>Valor</th><th>Binario</th><th>Instrucción</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </section>
+    <div class="grid gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(18rem,0.85fr)]">
+      <div class="min-w-0 space-y-6">
+        <section aria-label="Registros del CPU" class="overflow-hidden rounded-xl border border-[#d8dfd5] bg-white shadow-[0_3px_16px_rgba(23,43,36,0.04)]">
+          <div class="flex items-end justify-between border-b border-[#e7ebe4] px-5 py-4 sm:px-6">
+            <div><p class="mb-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[#728077]">Estado del procesador</p><h2 class="text-lg font-extrabold tracking-tight">Registros</h2></div>
+            <span class="font-mono text-[11px] text-[#859087]">5 unidades</span>
+          </div>
+          <div id="registros" class="grid grid-cols-2 gap-2.5 p-4 sm:grid-cols-3 sm:gap-3 sm:p-5 xl:grid-cols-5"></div>
+        </section>
 
-    <section class="panel" aria-label="Bitácora">
-      <h2>Bitácora</h2>
-      <ol id="bitacora"></ol>
-    </section>
+        <section aria-label="Memoria del programa" class="overflow-hidden rounded-xl border border-[#d8dfd5] bg-white shadow-[0_3px_16px_rgba(23,43,36,0.04)]">
+          <div class="flex items-end justify-between border-b border-[#e7ebe4] px-5 py-4 sm:px-6">
+            <div><p class="mb-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[#728077]">Espacio de direcciones</p><h2 class="text-lg font-extrabold tracking-tight">Memoria</h2></div>
+            <span class="font-mono text-[11px] text-[#859087]">16 celdas · 8 bits</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table id="memoria" class="w-full min-w-[560px] border-collapse text-left font-mono text-xs">
+              <thead class="bg-[#f5f7f2] text-[10px] uppercase tracking-[0.12em] text-[#748078]"><tr><th class="px-4 py-3 font-semibold sm:px-6">Dir</th><th class="px-4 py-3 font-semibold">Valor</th><th class="px-4 py-3 font-semibold">Binario</th><th class="px-4 py-3 font-semibold sm:px-6">Instruccion</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="flex flex-wrap gap-x-5 gap-y-2 border-t border-[#e7ebe4] px-5 py-3 text-[11px] text-[#758178] sm:px-6">
+            <span class="inline-flex items-center gap-2"><span class="size-2 rounded-sm bg-[#d5ef92]"></span>Direccion actual</span>
+            <span class="inline-flex items-center gap-2"><span class="size-2 rounded-sm bg-[#f4d89b]"></span>Dato modificado</span>
+          </div>
+        </section>
+      </div>
 
-    <!-- Persona 2: aquí puede ir el modo "predice el siguiente paso" y la animación del bus -->
-    <section class="panel" id="zona-didactica" aria-label="Modo didáctico">
-      <h2>Modo didáctico</h2>
-      <p>Pendiente: modo "predice el siguiente paso".</p>
-    </section>
+      <aside class="space-y-6">
+        <section aria-label="Bitacora de ejecucion" class="overflow-hidden rounded-xl border border-[#d8dfd5] bg-white shadow-[0_3px_16px_rgba(23,43,36,0.04)]">
+          <div class="flex items-end justify-between border-b border-[#e7ebe4] px-5 py-4">
+            <div><p class="mb-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[#728077]">Registro de actividad</p><h2 class="text-lg font-extrabold tracking-tight">Bitacora</h2></div>
+            <span class="font-mono text-[11px] text-[#859087]">En vivo</span>
+          </div>
+          <ol id="bitacora" class="max-h-[440px] min-h-32 space-y-0 overflow-y-auto px-5 py-2" aria-live="polite"></ol>
+        </section>
+
+        <section id="zona-didactica" aria-label="Modo didactico" class="relative overflow-hidden rounded-xl bg-[#e6edda] p-5 sm:p-6">
+          <div class="absolute -right-6 -top-7 size-28 rotate-12 border-[14px] border-[#d5e2c3]" aria-hidden="true"></div>
+          <div class="relative">
+            <p class="mb-2 font-mono text-[10px] font-medium uppercase tracking-[0.15em] text-[#58734c]">Reto interactivo</p>
+            <h2 class="text-base font-extrabold text-[#233c2f]">Modo didactico: Predice el paso</h2>
+            <p id="pregunta-didactica" class="mt-2 max-w-sm text-sm leading-5 text-[#53664f]">¿Qué registro o componente cambiará en el siguiente paso?</p>
+            <div id="opciones-didactica" class="mt-3 grid grid-cols-2 gap-2"></div>
+            <div id="feedback-didactica" class="mt-2 min-h-5 text-[11px] font-bold"></div>
+          </div>
+        </section>
+      </aside>
+    </div>
   </main>
 
   <script src="cpu.js"></script>
